@@ -1,0 +1,137 @@
+#include "ofApp.h"
+
+vector<ofPoint> vertices; //顶点向量
+vector<ofColor> colors;   //颜色向量
+int nTri;		//The number of triangles  三角形个数
+int nVert;	   //The number of the vertices equals nTri * 3 三角形顶点个数
+
+//--------------------------------------------------------------
+void ofApp::setup() {
+	nTri = 1500;			//The number of the triangles  设置个数1500
+	nVert= nTri * 3;		//The number of the vertices   设置个数4500
+
+	float Rad = 250;	//The sphere's radius 设置球体半径250
+	float rad = 25;	//Maximal triangle's 搑adius? 设置三角形最大半径25
+	//(formally, it's the maximal coordinates' 
+	//deviation from the triangle's center)
+
+	//开始填充定点 数组，动态设置向量大小，4500
+	//Fill the vertices array
+	vertices.resize( nVert );		//Set the array size
+	for (int i=0; i<nTri; i++) {	//Scan all the triangles
+		//Generate the center of the triangle
+		//as a random point on the sphere
+
+		//设置三角形中心坐标，使用归一函数，并乘以球体半径，得到遍布于球体的点
+		//Take the random point from
+		//cube [-1,1]x[-1,1]x[-1,1]	
+		ofPoint center( ofRandom( -1, 1 ),ofRandom( -1, 1 ),ofRandom( -1, 1 ) );
+		center.normalize(); //Normalize vector's length to 1
+		center *= Rad;	//Now the center vector has
+		//length Rad
+
+		//设置三角形除中心外的点，以三角形中心发散，范围25浮动
+		//Generate the triangle's vertices
+		//as the center plus random point from
+		//[-rad, rad]x[-rad, rad]x[-rad, rad]
+		for (int j=0; j<3; j++) {
+			vertices[ i*3 + j ] =center + ofPoint( ofRandom( -rad, rad ),ofRandom( -rad, rad ),ofRandom( -rad, rad ) );
+		}
+	}
+
+	//为三角形设置随机色彩
+	//Fill the array of triangles' colors
+	colors.resize( nTri );
+	for (int i=0; i<nTri; i++) {
+		//Take a random color from black to red
+		colors[i] = ofColor( ofRandom( 0, 255 ), 0, 0 );
+	}
+}
+
+//--------------------------------------------------------------
+void ofApp::update(){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::draw(){
+	//Z-buffering是在为物件进行着色时，执行“隐藏面消除”工作的一项技术，所以隐藏物件背后的部分就不会被显示出来
+	ofEnableDepthTest();				//Enable z-buffering
+
+	//设置一个渐变背景，从白色到灰色
+    //Set a gradient background from white to gray
+	//for adding an illusion of visual depth to the scene
+	ofBackgroundGradient( ofColor( 255 ), ofColor( 128 ) );
+
+	//存储坐标系(标准写法)
+	ofPushMatrix();						//Store the coordinate system
+
+	//设置画面中心为坐标系原点
+	//Move the coordinate center to screen's center
+	ofTranslate( ofGetWidth()/2, ofGetHeight()/2, 0 );
+
+	//为图形设置旋转效果，设置每时的旋转角度
+	//Calculate the rotation angle
+	//获取时间，作为递增指标(也可取其他)
+	float time = ofGetElapsedTimef();	//Get time in seconds
+	//设置当前角度的取值，因time递增，所以angle为顺时针递增
+	float angle = time * 10;			//Compute angle. We rotate at speed 10 degrees per second
+	//设置图形沿着y坐标轴旋转
+	ofRotate( angle, 0, 1, 0 );			//Rotate the coordinate system along y-axe
+
+	//绘制三角形
+	//Draw the triangles
+	for (int i=0; i<nTri; i++) {
+		//取用之前赋值的点
+		ofSetColor( colors[i] );		//Set color
+		ofTriangle( vertices[ i*3 ],vertices[ i*3 + 1 ],vertices[ i*3 + 2 ] );		//Draw triangle
+	}
+
+	//恢复坐标轴，pop删除，push入栈(大致意思)
+	ofPopMatrix();	//Restore the coordinate system
+}
+
+//--------------------------------------------------------------
+void ofApp::keyPressed(int key){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::keyReleased(int key){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseMoved(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseDragged(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mousePressed(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::dragEvent(ofDragInfo dragInfo){ 
+
+}
